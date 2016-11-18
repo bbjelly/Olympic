@@ -10,7 +10,7 @@ body {
     height: 100%;
 }
 .sport-pane {
-    float: left; /*FIX*/
+/*    float: left; FIX*/
 	max-width: 250px;
 	min-width: 200px;
 	flex-grow: 1;
@@ -51,6 +51,11 @@ body {
     color:#fff;
     box-shadow: 4px 4px 3px rgba(103, 115, 130, 1);
     opacity:0.9
+}
+
+/*Circles*/
+.players {
+    opacity: .8;
 }
 /* Charts */
 #svg_holder {
