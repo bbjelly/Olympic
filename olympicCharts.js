@@ -8,8 +8,6 @@ d3.json("OlympicRecords.json", function(data) {
             return null
         }
         var hms = this.split(':')
-        var minSec = hms.pop().split('.')
-        hms.push.apply(hms, minSec)
         var seconds = 0
         for (var iTime = 0; iTime < hms.length; iTime++) {
             seconds += +hms[iTime] * Math.pow(60, hms.length - iTime - 1)
@@ -22,50 +20,59 @@ d3.json("OlympicRecords.json", function(data) {
         .data(Object.keys(data)).enter()
         .append("li")
             .attr("id", function(sport) {return sport})
+            .attr("class", "sport-list")
             .attr("data-toggle", "collapse")
             .attr("data-target", function(sport) {return "#" + sport + "Menu"})
             .text(function(sport) {return sport})
-    
-    d3.select(".sport-pane").selectAll("div")
-        .data(Object.keys(data)).enter()
-        .insert("div", "#athletics+*")//function(sport) {return "#" + sport + " + *"})
+    d3.selectAll(".sport-pane > li").each(function () {
+        var sport = this.id
+        var newNode = document.createElement('div')
+        d3.select(newNode)
             .attr("class", "collapse")
-            .attr("id", function(sport) {return sport + "Menu"})
+            .attr("id", function() {return sport + "Menu"})
             .selectAll("li")
-                .data(Object.keys(data["athletics"])).enter() //TODO
+                .data(function(){
+                    return Object.keys(data[sport])
+                }).enter()
                 .append("li")
                     .attr("class", "event-list")
                     .text(function(event) {return event})
                     .on("click", function(event) {
                         d3.select(".svg").remove()
-                        clickedEvent = data["athletics"][event]
+                        var parentId = this.parentElement.id
+                        var locMenu = parentId.lastIndexOf("Menu")
+                        var keyId = parentId.substring(0, locMenu)
+                        clickedEvent = data[keyId][event]
                         clickedEvent = generateData(clickedEvent)
                         createChart(clickedEvent)
                     })
-    
-//            .on("mouseover", function(event_name) {
-//                d3.select("body").append("div")
-//                    .attr("class", "event-pane")
-//                    .attr("width", "200px")
-//                    .selectAll("li")
-//                        .data(Object.keys(data[event_name])).enter()
-//                        .append("li")
-//                            .attr("class", "event-list")
-//                            .text(function(event) {return event})
-//                console.log("hello")
-//            })
-//            .on("mousemove", function() {
-//                d3.selectAll(".event-pane")
-//                    .style("top",(d3.mouse(document.body)[1] + 40) + "px")
-//                    .style("left",(d3.mouse(document.body)[0] + 20) + "px");
-//            })
-//            .on("mouseout", function(d) {
-//                d3.selectAll(".event-pane").remove();
-//            })
-            .append("img")
-                .attr("class", "sport-img")
-                .attr("src", "https://openclipart.org/image/2400px/svg_to_png/194077/Placeholder.png")
-    
+        this.parentNode.insertBefore(newNode, this.nextSibling);
+    })
+//    d3.select(".sport-pane").selectAll("div")
+//        .data(Object.keys(data)).enter()
+//        .insert("div", "#athletics+*")//function(sport) {return "#" + sport + " + *"})
+//            .attr("class", "collapse")
+//            .attr("id", function(sport) {return sport + "Menu"})
+//            .selectAll("li")
+//                .data(function(sport){
+//                    return Object.keys(data[sport])
+//                }).enter()
+//                .append("li")
+//                    .attr("class", "event-list")
+//                    .text(function(event) {return event})
+//                    .on("click", function(event) {
+//                        d3.select(".svg").remove()
+//                        var parentId = this.parentElement.id
+//                        var locMenu = parentId.lastIndexOf("Menu")
+//                        var keyId = parentId.substring(0, locMenu)
+//                        clickedEvent = data[keyId][event]
+//                        clickedEvent = generateData(clickedEvent)
+//                        createChart(clickedEvent)
+//                    })
+//            .append("img")
+//                .attr("class", "sport-img")
+//                .attr("src", "https://openclipart.org/image/2400px/svg_to_png/194077/Placeholder.png")
+//    
     generateData(selectedEvent)
     createChart(selectedEvent)
     
@@ -121,6 +128,32 @@ function createChart(selectedEvent) {
             splitNames = d.Olympic.split(" ")
             return yLoc(parseInt(splitNames[splitNames.length-1]))
         })
+//    var circle = svg.selectAll("dot")
+//        .data(selectedEvent)
+//        .enter().append("img")
+//        .attr("class", "players")
+//        .attr("src", function(d) {
+//                return d.pic
+//            })
+//        .attr("val", function(d) {
+//            if (!d.record){
+//                return "false"
+//            }
+//            return d.record
+//        })
+//        .style("position", "absolute")
+//        .style("left", function(d) {
+//            if (!x(d.inverseRecord)){
+//                return width-radius
+//            }
+//            return x(d.inverseRecord)
+//        })
+//        .style("top", function(d) {
+//            splitNames = d.Olympic.split(" ")
+//            return yLoc(parseInt(splitNames[splitNames.length-1]))
+//        })
+//        .attr("height", 40)
+//        .attr("width", 40)
     
 }
 
