@@ -107,53 +107,108 @@ function createChart(selectedEvent) {
         })])
         
     // Add the scatterplot
-    var circle = svg.selectAll("dot")
-        .data(selectedEvent)
-        .enter().append("circle")
-        .attr("class", "players")
-        .attr("val", function(d) {
-            if (!d.record){
-                return "false"
-            }
-            return d.record
-        })
-        .attr("r", radius)
-        .attr("cx", function(d) {
-            if (!x(d.inverseRecord)){
-                return width-radius
-            }
-            return x(d.inverseRecord)
-        })
-        .attr("cy", function(d) {
-            splitNames = d.Olympic.split(" ")
-            return yLoc(parseInt(splitNames[splitNames.length-1]))
-        })
 //    var circle = svg.selectAll("dot")
 //        .data(selectedEvent)
-//        .enter().append("img")
+//        .enter().append("circle")
 //        .attr("class", "players")
-//        .attr("src", function(d) {
-//                return d.pic
-//            })
 //        .attr("val", function(d) {
 //            if (!d.record){
 //                return "false"
 //            }
 //            return d.record
 //        })
-//        .style("position", "absolute")
-//        .style("left", function(d) {
+//        .attr("r", radius)
+//        .attr("cx", function(d) {
 //            if (!x(d.inverseRecord)){
 //                return width-radius
 //            }
 //            return x(d.inverseRecord)
 //        })
-//        .style("top", function(d) {
+//        .attr("cy", function(d) {
 //            splitNames = d.Olympic.split(" ")
 //            return yLoc(parseInt(splitNames[splitNames.length-1]))
 //        })
-//        .attr("height", 40)
-//        .attr("width", 40)
+    var flag = svg.selectAll("dot")
+        .data(selectedEvent)
+        .enter().append("image")
+        .attr("class", "players")
+        .attr("xlink:href", function(d) {
+                return d.pic
+            })
+        .attr("val", function(d) {
+            if (!d.record){
+                return "false" 
+            }
+            return d.record
+        })
+        .attr("x", function(d) {
+            if (!x(d.inverseRecord)){
+                return width-radius
+            }
+            return x(d.inverseRecord)
+        })
+        .attr("y", function(d) {
+            splitNames = d.Olympic.split(" ")
+            return yLoc(parseInt(splitNames[splitNames.length-1]))
+        })
+//        .attr("title", "title")
+        .attr("height", 40)
+        .attr("width", 40)
+// Normal way to show hover
+    svg.selectAll("g > *")
+        .on("mouseover", function(d) {
+            var divText = d3.selectAll("body")
+                .append("div")
+                .attr("class", "previewWrap")
+                .attr("width", "200px")
+            divText
+                .append("p")
+                .text("Name: " + d.name);
+            divText
+                .append("p")
+                .text("Olympic: " + d.Olympic)
+            divText
+                .append("p")
+                .text("Record: " + d.record)
+        })
+        .on("mousemove", function() {
+            d3.selectAll(".previewWrap")
+                .style("top",(d3.mouse(document.body)[1] + 40) + "px")
+                .style("left",(d3.mouse(document.body)[0] + 20) + "px");
+        })
+        .on("mouseout", function(d) {
+            d3.selectAll(".previewWrap").remove();
+})
+    // tool tip?
+//    d3.selectAll(".players")
+//        .each(function(d, i) {
+//            var playerInfo = d3.select(document.createElement("svg")).attr("height", 60)
+//            var g = playerInfo.append("g")
+//            g.append("rect").attr("width", 150).attr("height", 50)
+//            g.append("text").text("Olympic: " + d.Olympic + "<br/>" + "Record: " + d.record)
+//            $(this).popover({
+//                title: "Title",
+//                content: "content",
+//                trigger: "hover"
+//            })
+//        })
+//    $(".players").tooltip()
+    var y = d3.scaleTime()
+    .range([height, 0]);
+    var yAxis = d3.axisLeft(y)
+    y.domain([new Date(d3.min(selectedEvent, function(d) {
+        var olympicSplit = d.Olympic.split(" ")
+        var year = olympicSplit[olympicSplit.length-1]
+        return parseInt(year)
+    }),0,1), new Date(d3.max(selectedEvent, function(d) {
+        var olympicSplit = d.Olympic.split(" ")
+        var year = olympicSplit[olympicSplit.length-1]
+        return parseInt(year)
+    }),0,1)])
+    svg.append("g")
+        .attr("class", "yAxis")
+        .attr("transform", "translate(50, 0)")
+        .call(yAxis)
     
 }
 

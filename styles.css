@@ -67,8 +67,46 @@ body {
 }
 /*Circles*/
 .players {
-    opacity: .8;
+    opacity: .9;
+/*    clip-path: circle(60px at center);*/
 }
 /* Charts */
-#svg_holder {
+/* Axis */
+.yAxis {
+    fill: none;
+    stroke: none;
+}
+.yAxis path {
+    display: none;
+}
+.tick line {
+    display: none;
+}
+
+/* Preview Wrap */
+
+.previewWrap {
+    position: absolute;
+    border:3px solid #ccc;
+    padding:5px;
+    box-shadow: 4px 4px 3px rgba(103, 115, 130, 1);
+}
+.previewWrap::after {
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    content: "";
+    position:absolute;
+    width: 180px;
+    height: 100px;
+    background-image:url(images/logo.png);
+    background-size: 50px;
+    background-repeat: no-repeat;
+    background-position: bottom right;
+    background-color: #fff;
+        display:none;
+    color:#777;
+    opacity:0.9;
+    z-index: -1;   
 }
