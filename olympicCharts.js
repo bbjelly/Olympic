@@ -44,7 +44,7 @@ d3.json("OlympicRecords.json", function(data) {
                         var keyId = parentId.substring(0, locMenu)
                         clickedEvent = data[keyId][event]
                         clickedEvent = generateData(clickedEvent)
-                        createChart(clickedEvent)
+                        createChart(clickedEvent, keyId, event)
                     })
         this.parentNode.insertBefore(newNode, this.nextSibling);
     })
@@ -74,12 +74,15 @@ d3.json("OlympicRecords.json", function(data) {
 //                .attr("src", "https://openclipart.org/image/2400px/svg_to_png/194077/Placeholder.png")
 //    
     generateData(selectedEvent)
-    createChart(selectedEvent)
+    createChart(selectedEvent, "speed-skating", "1000m-men")
     
 })
 
-function createChart(selectedEvent) {
-    console.log("CreateChart accessed")
+function createChart(selectedEvent, sportName, eventName) {
+    d3.select("#svg_holder").append("h1")
+        .text(sportName.toUpperCase())
+    d3.select("#svg_holder").append("h3")
+        .text(eventName.toUpperCase())
     var svg = d3.select("#svg_holder")
         .attr("height", height + margin.top + margin.bottom)
         .attr("width", width)
@@ -193,21 +196,24 @@ function createChart(selectedEvent) {
 //            })
 //        })
 //    $(".players").tooltip()
+    var minYear = d3.min(selectedEvent, function(d) {
+        var olympicSplit = d.Olympic.split(" ")
+        var year = olympicSplit[olympicSplit.length-1]
+        return parseInt(year)
+    })
+    var maxYear = d3.max(selectedEvent, function(d) {
+        var olympicSplit = d.Olympic.split(" ")
+        var year = olympicSplit[olympicSplit.length-1]
+        return parseInt(year)
+    })
     var y = d3.scaleTime()
     .range([height, 0]);
     var yAxis = d3.axisLeft(y)
-    y.domain([new Date(d3.min(selectedEvent, function(d) {
-        var olympicSplit = d.Olympic.split(" ")
-        var year = olympicSplit[olympicSplit.length-1]
-        return parseInt(year)
-    }),0,1), new Date(d3.max(selectedEvent, function(d) {
-        var olympicSplit = d.Olympic.split(" ")
-        var year = olympicSplit[olympicSplit.length-1]
-        return parseInt(year)
-    }),0,1)])
+//    yAxis.tickValues(d3.range(minYear, maxYear, 4))
+    y.domain([new Date(minYear,0,1), new Date(maxYear,0,1)])
     svg.append("g")
         .attr("class", "yAxis")
-        .attr("transform", "translate(50, 0)")
+        .attr("transform", "translate(60, 0)")
         .call(yAxis)
     
 }
